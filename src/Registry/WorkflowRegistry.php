@@ -13,7 +13,9 @@ declare(strict_types=1);
 namespace Pandawa\Workflow\Registry;
 
 use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\DefinitionBuilder;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
@@ -44,15 +46,18 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
     /**
      * Constructor.
      *
-     * @param array $config
+     * @param array                    $config
+     * @param EventSubscriberInterface $eventSubscriber
      */
-    public function __construct(array $config = [])
+    public function __construct(array $config = [], EventSubscriberInterface $eventSubscriber)
     {
         $this->eventDispatcher = new EventDispatcher();
         $this->registry = new Registry();
 
+        $this->eventDispatcher->addSubscriber($eventSubscriber);
+
         foreach ($config as $name => $workflowConfig) {
-            $this->addFromArray($name, $workflowConfig);
+            $this->addFromArray((string) $name, $workflowConfig);
         }
     }
 
@@ -124,6 +129,7 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
      * @param array $workflowConfig
      *
      * @return MarkingStoreInterface
+     * @throws ReflectionException
      */
     protected function getMarkingStoreInstance(array $workflowConfig): MarkingStoreInterface
     {

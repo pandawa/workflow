@@ -8,8 +8,13 @@
  * file that was distributed with this source code.
  */
 
-return [
-    'subscriber' => Pandawa\Workflow\Subscriber\WorkflowSubscriber::class,
-    'registry'   => Pandawa\Workflow\Registry\WorkflowRegistry::class,
-    'workflows'  => [],
-];
+declare(strict_types=1);
+
+namespace Pandawa\Workflow\Event;
+
+/**
+ * @author  Iqbal Maulana <iq.bluejack@gmail.com>
+ */
+final class Entered extends AbstractEvent
+{
+}
