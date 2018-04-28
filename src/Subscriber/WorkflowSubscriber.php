@@ -165,7 +165,7 @@ final class WorkflowSubscriber implements EventSubscriberInterface
         $this->dispatcher->dispatch(sprintf('workflow.%s.%s', $workflowName, $eventName), $event);
 
         foreach ($places as $place) {
-            $this->dispatcher->dispatch(sprintf('workflow.%s.%s.%s', $workflowName, $event, $place), $event);
+            $this->dispatcher->dispatch(sprintf('workflow.%s.%s.%s', $workflowName, $eventName, $place), $event);
         }
     }
 }
