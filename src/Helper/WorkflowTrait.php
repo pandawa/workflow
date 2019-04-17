@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Pandawa\Workflow\Helper;
 
 use Pandawa\Workflow\Registry\WorkflowRegistryInterface;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * @author  Iqbal Maulana <iq.bluejack@gmail.com>
@@ -23,11 +22,11 @@ trait WorkflowTrait
     /**
      * @param string|null $workflow
      *
-     * @return WorkflowInterface
+     * @return WorkflowContainer
      */
-    public function workflow(string $workflow = null): WorkflowInterface
+    public function workflow(string $workflow = null): WorkflowContainer
     {
-        return $this->workflowRegistry()->get($this, $workflow);
+        return new WorkflowContainer($this->workflowRegistry()->get($this, $workflow), $this);
     }
 
     /**

@@ -4,4 +4,7 @@ Symfony\Component\EventDispatcher\EventSubscriberInterface:
 
 Pandawa\Workflow\Registry\WorkflowRegistryInterface:
     class: "%modules.workflow.registry%"
-    arguments: ["%modules.workflow.workflows%", '@workflow_subscriber']
+    arguments:
+        - "%modules.workflow.workflows%"
+        - '@workflow_subscriber'
+        - '@Pandawa\Component\Resource\ResourceRegistryInterface'

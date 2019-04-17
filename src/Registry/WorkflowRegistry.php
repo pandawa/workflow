@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace Pandawa\Workflow\Registry;
 
+use Pandawa\Component\Resource\ResourceRegistryInterface;
 use ReflectionClass;
 use ReflectionException;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Definition;
@@ -41,7 +43,12 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
     /**
      * @var Registry
      */
-    private $registry;
+    private $workflowRegistry;
+
+    /**
+     * @var ResourceRegistryInterface
+     */
+    private $resourceRegistry;
 
     /**
      * Constructor.
@@ -49,10 +56,11 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
      * @param array                    $config
      * @param EventSubscriberInterface $eventSubscriber
      */
-    public function __construct(array $config = [], EventSubscriberInterface $eventSubscriber)
+    public function __construct(array $config = [], EventSubscriberInterface $eventSubscriber, ResourceRegistryInterface $resourceRegistry = null)
     {
         $this->eventDispatcher = new EventDispatcher();
-        $this->registry = new Registry();
+        $this->workflowRegistry = new Registry();
+        $this->resourceRegistry = $resourceRegistry;
 
         $this->eventDispatcher->addSubscriber($eventSubscriber);
 
@@ -66,7 +74,7 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
      */
     public function get(object $subject, string $workflowName = null): WorkflowInterface
     {
-        return $this->registry->get($subject, $workflowName);
+        return $this->workflowRegistry->get($subject, $workflowName);
     }
 
     /**
@@ -74,7 +82,7 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
      */
     public function add(WorkflowInterface $workflow, string $supportStrategy): void
     {
-        $this->registry->addWorkflow($workflow, new InstanceOfSupportStrategy($supportStrategy));
+        $this->workflowRegistry->addWorkflow($workflow, new InstanceOfSupportStrategy($supportStrategy));
     }
 
     /**
@@ -97,8 +105,27 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
         $markingStore = $this->getMarkingStoreInstance($workflowConfig);
         $workflow = $this->getWorkflowInstance($name, $workflowConfig, $definition, $markingStore);
 
-        foreach ($workflowConfig['supports'] as $supportedClass) {
-            $this->add($workflow, $supportedClass);
+        foreach ($workflowConfig['supports'] as $supported) {
+            if (class_exists($supported)) {
+                $this->add($workflow, $supported);
+
+                continue;
+            }
+
+            if (null !== $this->resourceRegistry && $this->resourceRegistry->has($supported)) {
+                $resource = $this->resourceRegistry->get($supported);
+                $this->add($workflow, $resource->getModelClass());
+
+                continue;
+            }
+
+            throw new RuntimeException(
+                sprintf(
+                    'Supported item "%s" in workflow "%s" must be a class or a resource.',
+                    $supported,
+                    $workflow->getName()
+                )
+            );
         }
     }
 
