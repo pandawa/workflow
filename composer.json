@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=7.2",
-        "pandawa/pandawa": "^1.0",
+        "pandawa/pandawa": "dev-master",
         "symfony/workflow": "^3.3 || ^4.0"
     },
     "require-dev": {
@@ -31,7 +31,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.1-dev"
+            "dev-master": "2.0-dev"
         },
         "laravel": {
             "providers": [
