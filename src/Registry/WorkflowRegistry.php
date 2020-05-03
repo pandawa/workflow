@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Pandawa\Workflow\Registry;
 
+use Illuminate\Support\Str;
 use Pandawa\Component\Resource\ResourceRegistryInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -21,8 +22,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\DefinitionBuilder;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
-use Symfony\Component\Workflow\MarkingStore\MultipleStateMarkingStore;
-use Symfony\Component\Workflow\MarkingStore\SingleStateMarkingStore;
+use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
@@ -166,9 +166,11 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
         if (isset($markingStoreData['class'])) {
             $className = $markingStoreData['class'];
         } else if (isset($markingStoreData['type']) && $markingStoreData['type'] === 'multiple_state') {
-            $className = MultipleStateMarkingStore::class;
+            $className = MethodMarkingStore::class;
+            $arguments = [false, $arguments];
         } else {
-            $className = SingleStateMarkingStore::class;
+            $className = MethodMarkingStore::class;
+            $arguments = [true, Str::camel($arguments[0])];
         }
 
         $class = new ReflectionClass($className);
