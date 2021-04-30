@@ -56,7 +56,7 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
      * @param array                    $config
      * @param EventSubscriberInterface $eventSubscriber
      */
-    public function __construct(array $config = [], EventSubscriberInterface $eventSubscriber, ResourceRegistryInterface $resourceRegistry = null)
+    public function __construct(array $config, EventSubscriberInterface $eventSubscriber, ResourceRegistryInterface $resourceRegistry = null)
     {
         $this->eventDispatcher = new EventDispatcher();
         $this->workflowRegistry = new Registry();
