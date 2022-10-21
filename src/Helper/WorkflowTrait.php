@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Pandawa\Workflow\Helper;
 
 use Pandawa\Workflow\Registry\WorkflowRegistryInterface;
+use Pandawa\Workflow\WorkflowContainer;
 
 /**
  * @author  Iqbal Maulana <iq.bluejack@gmail.com>

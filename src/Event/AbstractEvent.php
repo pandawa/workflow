@@ -19,26 +19,7 @@ use Symfony\Component\Workflow\Event\Event;
  */
 abstract class AbstractEvent
 {
-    /**
-     * @var Event
-     */
-    protected $originalEvent;
-
-    /**
-     * Constructor.
-     *
-     * @param Event $originalEvent
-     */
-    public function __construct(Event $originalEvent)
+    public function __construct(public readonly Event $originalEvent)
     {
-        $this->originalEvent = $originalEvent;
-    }
-
-    /**
-     * @return Event
-     */
-    public function getOriginalEvent(): Event
-    {
-        return $this->originalEvent;
     }
 }

@@ -1,9 +1,12 @@
-Symfony\Component\EventDispatcher\EventSubscriberInterface:
+pandawa.workflow.event_subscriber:
     class: "%modules.workflow.subscriber%"
-    alias: "workflow_subscriber"
+    alias:
+        - Symfony\Component\EventDispatcher\EventSubscriberInterface
+        - workflow_subscriber
 
-Pandawa\Workflow\Registry\WorkflowRegistryInterface:
+pandawa.workflow.registry:
     class: "%modules.workflow.registry%"
+    alias: Pandawa\Workflow\Registry\WorkflowRegistryInterface
     arguments:
         - "%modules.workflow.workflows%"
         - '@workflow_subscriber'

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Pandawa\Workflow\Subscriber;
 
-use Illuminate\Contracts\Events\Dispatcher;
+use Pandawa\Contracts\Bus\BusInterface;
 use Pandawa\Workflow\Event\AbstractEvent;
 use Pandawa\Workflow\Event\Announced;
 use Pandawa\Workflow\Event\Completed;
@@ -30,19 +30,8 @@ use Symfony\Component\Workflow\Event\GuardEvent as SymfonyGuardEvent;
  */
 final class WorkflowSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher;
-
-    /**
-     * Constructor.
-     *
-     * @param Dispatcher $dispatcher
-     */
-    public function __construct(Dispatcher $dispatcher)
+    public function __construct(private readonly BusInterface $dispatcher)
     {
-        $this->dispatcher = $dispatcher;
     }
 
     /**

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Pandawa\Workflow\Registry;
 
 use Illuminate\Support\Str;
-use Pandawa\Component\Resource\ResourceRegistryInterface;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
@@ -38,17 +37,12 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
     /**
      * @var EventDispatcher
      */
-    private $eventDispatcher;
+    private readonly EventDispatcher $eventDispatcher;
 
     /**
      * @var Registry
      */
-    private $workflowRegistry;
-
-    /**
-     * @var ResourceRegistryInterface
-     */
-    private $resourceRegistry;
+    private readonly Registry $workflowRegistry;
 
     /**
      * Constructor.
@@ -56,11 +50,10 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
      * @param array                    $config
      * @param EventSubscriberInterface $eventSubscriber
      */
-    public function __construct(array $config, EventSubscriberInterface $eventSubscriber, ResourceRegistryInterface $resourceRegistry = null)
+    public function __construct(array $config, EventSubscriberInterface $eventSubscriber)
     {
         $this->eventDispatcher = new EventDispatcher();
         $this->workflowRegistry = new Registry();
-        $this->resourceRegistry = $resourceRegistry;
 
         $this->eventDispatcher->addSubscriber($eventSubscriber);
 
@@ -112,13 +105,6 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
                 continue;
             }
 
-            if (null !== $this->resourceRegistry && $this->resourceRegistry->has($supported)) {
-                $resource = $this->resourceRegistry->get($supported);
-                $this->add($workflow, $resource->getModelClass());
-
-                continue;
-            }
-
             throw new RuntimeException(
                 sprintf(
                     'Supported item "%s" in workflow "%s" must be a class or a resource.',
@@ -160,8 +146,8 @@ final class WorkflowRegistry implements WorkflowRegistryInterface
      */
     protected function getMarkingStoreInstance(array $workflowConfig): MarkingStoreInterface
     {
-        $markingStoreData = isset($workflowConfig['marking_store']) ? $workflowConfig['marking_store'] : [];
-        $arguments = isset($markingStoreData['arguments']) ? $markingStoreData['arguments'] : [];
+        $markingStoreData = $workflowConfig['marking_store'] ?? [];
+        $arguments = $markingStoreData['arguments'] ?? [];
 
         if (isset($markingStoreData['class'])) {
             $className = $markingStoreData['class'];

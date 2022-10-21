@@ -1,41 +1,23 @@
 <?php
 declare(strict_types=1);
 
-namespace Pandawa\Workflow\Helper;
+namespace Pandawa\Workflow;
 
 use Symfony\Component\Workflow\Definition;
+use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 use Symfony\Component\Workflow\Metadata\MetadataStoreInterface;
 use Symfony\Component\Workflow\Transition;
-use Symfony\Component\Workflow\Workflow;
-use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\TransitionBlockerList;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * @author  Iqbal Maulana <iq.bluejack@gmail.com>
  */
 class WorkflowContainer
 {
-    /**
-     * @var Workflow
-     */
-    private $workflow;
-
-    /**
-     * @var object
-     */
-    private $subject;
-
-    /**
-     * Constructor.
-     *
-     * @param Workflow $workflow
-     * @param object   $subject
-     */
-    public function __construct(Workflow $workflow, object $subject)
+    public function __construct(public readonly WorkflowInterface $workflow, public readonly object $subject)
     {
-        $this->workflow = $workflow;
-        $this->subject = $subject;
     }
 
     /**
