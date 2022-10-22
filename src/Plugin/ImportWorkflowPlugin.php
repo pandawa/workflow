@@ -28,7 +28,7 @@ class ImportWorkflowPlugin extends Plugin
         }
     }
 
-    public function register(): void
+    public function configure(): void
     {
         if ($this->bundle->getApp()->configurationIsCached()) {
             return;
